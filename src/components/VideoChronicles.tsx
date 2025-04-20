@@ -4,13 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Данные видеохроники ВОВ
+// Данные видеохроники ВОВ с обновленными рабочими ссылками
 const videoArchives = [
   {
     id: 1,
     title: "Начало войны. Июнь 1941",
     description: "Кадры первых дней Великой Отечественной войны",
-    src: "https://archive.org/download/WorldWarIiSovietFilmsAndNewsreels/SovietFilmsOfWorldWarIiBeginningGermanInvasionAndFirstBattles.mp4",
+    src: "https://ia601600.us.archive.org/10/items/1941-1945/1941-1945.mp4",
     thumbnail: "https://cdn.pixabay.com/photo/2020/10/28/22/34/soldiers-5694568_1280.jpg",
     category: "Начало войны"
   },
@@ -18,7 +18,7 @@ const videoArchives = [
     id: 2,
     title: "Битва за Москву",
     description: "Хроника обороны Москвы и контрнаступления советских войск",
-    src: "https://archive.org/download/WorldWarIiSovietFilmsAndNewsreels/MoscowStrikesBack1942.mp4",
+    src: "https://ia802702.us.archive.org/26/items/OdessaIsInFighting/MoscowStrikesBack1942.mp4",
     thumbnail: "https://cdn.pixabay.com/photo/2015/10/26/22/24/world-war-ii-1008290_1280.jpg",
     category: "Ключевые сражения"
   },
@@ -26,7 +26,7 @@ const videoArchives = [
     id: 3,
     title: "Сталинградская битва",
     description: "Документальные кадры сражения на Волге",
-    src: "https://archive.org/download/WorldWarIiSovietFilmsAndNewsreels/SovietFilmsOfWorldWarIiStalingradBattle.mp4",
+    src: "https://archive.org/download/Stalingrad_1943/Stalingrad_512kb.mp4",
     thumbnail: "https://cdn.pixabay.com/photo/2019/09/08/19/13/field-4461583_1280.jpg",
     category: "Ключевые сражения"
   },
@@ -34,7 +34,7 @@ const videoArchives = [
     id: 4,
     title: "День Победы",
     description: "Исторические кадры празднования Победы",
-    src: "https://archive.org/download/WorldWarIiSovietFilmsAndNewsreels/BerlinRussianTroopsTakeTheCapitalMay1945.mp4",
+    src: "https://ia904604.us.archive.org/16/items/TheBattleOfBerlin/BerlinDownfall1945_512kb.mp4",
     thumbnail: "https://cdn.pixabay.com/photo/2018/05/05/07/29/sculpture-3375974_1280.jpg",
     category: "Победа"
   }
@@ -60,7 +60,9 @@ const VideoChronicles = () => {
       if (isPlaying) {
         videoRef[0].pause();
       } else {
-        videoRef[0].play();
+        videoRef[0].play().catch(error => {
+          console.error("Ошибка воспроизведения видео:", error);
+        });
       }
       setIsPlaying(!isPlaying);
     }
@@ -99,6 +101,7 @@ const VideoChronicles = () => {
                 onClick={togglePlay}
                 onEnded={() => setIsPlaying(false)}
                 preload="metadata"
+                controls
               ></video>
               
               {/* Управляющие элементы видео */}
