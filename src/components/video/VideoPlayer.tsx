@@ -11,18 +11,26 @@ interface VideoPlayerProps {
 const VideoPlayer = ({ video }: VideoPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play().catch(error => {
-          console.error("Ошибка воспроизведения видео:", error);
-        });
+        setError(null); // Сбрасываем ошибку при попытке нового воспроизведения
+        videoRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(err => {
+            console.error("Ошибка воспроизведения видео:", err);
+            setError("Не удалось воспроизвести видео. Возможно, формат не поддерживается вашим браузером.");
+            setIsPlaying(false);
+          });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -33,18 +41,45 @@ const VideoPlayer = ({ video }: VideoPlayerProps) => {
     }
   };
 
+  const handleVideoEnd = () => {
+    setIsPlaying(false);
+  };
+
+  const handleVideoError = () => {
+    setError("Ошибка загрузки видео. Пожалуйста, попробуйте позже.");
+    setIsPlaying(false);
+  };
+
   return (
     <div className="relative rounded-lg overflow-hidden shadow-lg bg-black aspect-video">
       <video 
         ref={videoRef}
-        src={video.src}
-        poster={video.thumbnail}
         className="w-full h-full object-contain"
-        onClick={togglePlay}
-        onEnded={() => setIsPlaying(false)}
+        poster={video.thumbnail}
         preload="metadata"
         controls
-      ></video>
+        onEnded={handleVideoEnd}
+        onError={handleVideoError}
+      >
+        <source src={video.src} type="video/mp4" />
+        Ваш браузер не поддерживает видео.
+      </video>
+      
+      {/* Отображение ошибки */}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70">
+          <div className="text-white p-4 bg-red-700 rounded max-w-md text-center">
+            <p>{error}</p>
+            <Button 
+              variant="outline" 
+              className="mt-4 text-white border-white"
+              onClick={() => setError(null)}
+            >
+              Закрыть
+            </Button>
+          </div>
+        </div>
+      )}
       
       {/* Управляющие элементы видео */}
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
@@ -74,13 +109,13 @@ const VideoPlayer = ({ video }: VideoPlayerProps) => {
       </div>
       
       {/* Оверлей для паузы */}
-      {!isPlaying && (
+      {!isPlaying && !error && (
         <div 
           className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 cursor-pointer"
           onClick={togglePlay}
         >
           <div className="rounded-full bg-white bg-opacity-80 p-6">
-            <Play className="h-12 w-12 text-victory-red" />
+            <Play className="h-12 w-12 text-red-600" />
           </div>
         </div>
       )}
