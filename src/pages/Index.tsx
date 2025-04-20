@@ -4,6 +4,8 @@ import HeroSection from "@/components/HeroSection";
 import AboutProject from "@/components/AboutProject";
 import LessonsPreview from "@/components/LessonsPreview";
 import UpcomingEvents from "@/components/UpcomingEvents";
+import HistoricalGallery from "@/components/HistoricalGallery";
+import VideoChronicles from "@/components/VideoChronicles";
 
 const Index = () => {
   return (
@@ -13,6 +15,8 @@ const Index = () => {
       <main className="flex-grow">
         <HeroSection />
         <AboutProject />
+        <HistoricalGallery />
+        <VideoChronicles />
         <LessonsPreview />
         <UpcomingEvents />
       </main>
